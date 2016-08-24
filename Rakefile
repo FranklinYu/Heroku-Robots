@@ -22,8 +22,6 @@ module GitHub
 
 end
 
-task :default => [:all]
-
-task :all do
+task :backup do
   GitHub.backup(owner: 'shadowsocks', repo: 'shadowsocks', branch: 'master')
 end
