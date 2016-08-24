@@ -34,10 +34,7 @@ file "#{SSH_DIRECTORY}/id_rsa" => [SSH_DIRECTORY] do |task|
 end
 
 file "#{SSH_DIRECTORY}/known_hosts" => [SSH_DIRECTORY] do |task|
-  raise 'GitHub public key not found' if ENV['GITHUB_PUBLIC_ID'].nil?
-  File.open(task.name, 'w') do |file|
-    file.write(ENV['GITHUB_PUBLIC_ID'] + "\n")
-  end
+  cp('GitHub.pub', task.name)
 end
 
 task backup: ["#{SSH_DIRECTORY}/id_rsa", "#{SSH_DIRECTORY}/known_hosts"] do
