@@ -5,3 +5,5 @@ begin
 rescue Errno::ENOENT
   # Ruby version file is missing.
 end
+
+gem 'rake', '~> 10.4'
