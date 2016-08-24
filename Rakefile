@@ -22,6 +22,22 @@ module GitHub
 
 end
 
-task :backup do
+SSH_DIRECTORY = "#{ENV['HOME']}/.ssh"
+
+file "#{SSH_DIRECTORY}/id_rsa" do |task|
+  raise 'private key not found' if ENV['PRIVATE_ID'].nil?
+  File.open(task.name, 'w') do |file|
+    file.write(ENV['PRIVATE_ID'])
+  end
+end
+
+file "#{SSH_DIRECTORY}/known_hosts" do |task|
+  raise 'GitHub public key not found' if ENV['GITHUB_PUBLIC_ID'].nil?
+  File.open(task.name, 'w') do |file|
+    file.write(ENV['GITHUB_PUBLIC_ID'])
+  end
+end
+
+task backup: ["#{SSH_DIRECTORY}/id_rsa", "#{SSH_DIRECTORY}/known_hosts"] do
   GitHub.backup(owner: 'shadowsocks', repo: 'shadowsocks', branch: 'master')
 end
