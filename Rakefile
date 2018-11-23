@@ -1,23 +1,25 @@
+require 'tmpdir'
+
 module GitHub
 
   extend FileUtils
 
-  REPO_NAME = 'repo'
   MY_USERNAME = 'franklinyu'
 
   def self.backup(owner:, repo:, branch: 'HEAD')
     source_url = "https://github.com/#{owner}/#{repo}.git"
     backup_url = "git@github.com:#{MY_USERNAME}/#{repo}.git"
-    if branch == 'HEAD'
-      sh('git', 'clone', source_url, REPO_NAME)
-    else
-      sh('git', 'clone', '--branch', branch, source_url, REPO_NAME)
+    Dir.mktmpdir do |dir|
+      if branch == 'HEAD'
+        sh('git', 'clone', source_url, dir)
+      else
+        sh('git', 'clone', '--branch', branch, source_url, dir)
+      end
+      Dir.chdir(dir) do
+        sh('git', 'remote', 'add', 'backup', backup_url)
+        sh('git', 'push', 'backup', branch)
+      end
     end
-    Dir.chdir(REPO_NAME) do
-      sh('git', 'remote', 'add', 'backup', backup_url)
-      sh('git', 'push', 'backup', branch)
-    end
-    sh('rm', '-r', '-f', REPO_NAME)
   end
 
 end
