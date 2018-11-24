@@ -1,5 +1,7 @@
 require 'tmpdir'
 require 'json'
+require 'dotenv'
+Dotenv.load
 
 module GitHub
 
