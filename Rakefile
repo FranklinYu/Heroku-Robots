@@ -15,7 +15,7 @@ module GitHub
       else
         sh('git', 'clone', '--branch', branch, source_url, dir)
       end
-      Dir.chdir(dir) do
+      chdir(dir) do
         sh('git', 'remote', 'add', 'backup', backup_url)
         sh('git', 'push', 'backup', branch)
       end
@@ -41,4 +41,5 @@ end
 
 task backup: ["#{SSH_DIRECTORY}/id_rsa", "#{SSH_DIRECTORY}/known_hosts"] do
   GitHub.backup(owner: 'shadowsocks', repo: 'shadowsocks', branch: 'master')
+  GitHub.backup(owner: 'EFForg', repo: 'https-everywhere', branch: 'master')
 end
