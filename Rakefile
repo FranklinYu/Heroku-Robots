@@ -1,4 +1,5 @@
 require 'tmpdir'
+require 'json'
 
 module GitHub
 
@@ -40,6 +41,11 @@ file "#{SSH_DIRECTORY}/known_hosts" => [SSH_DIRECTORY] do |task|
 end
 
 task backup: ["#{SSH_DIRECTORY}/id_rsa", "#{SSH_DIRECTORY}/known_hosts"] do
-  GitHub.backup(owner: 'shadowsocks', repo: 'shadowsocks', branch: 'master')
-  GitHub.backup(owner: 'EFForg', repo: 'https-everywhere', branch: 'master')
+  JSON.parse(ENV['GITHUB_REPOSITORIES'], symbolize_names: true).each do |repo|
+    if repo[:branch].nil?
+      GitHub.backup(owner: repo[:owner], repo: repo[:repo])
+    else
+      GitHub.backup(owner: repo[:owner], repo: repo[:repo], branch: repo[:branch])
+    end
+  end
 end
